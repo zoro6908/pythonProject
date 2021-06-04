@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %} | twitter 프로젝트</title>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
+</head>
+<body>
+    <div class="container">
+        <h1>Twitter 만들기 연습</h1>
+        <div class="navigation"></div>
+        {% if g.user %}
+            <a href=""> 나의 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href=""> 전체 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ rul_for('logout')}}"> 로그 아웃 </a>
+        </div>
+        {% else %}
+            <a href="{{ url_for('twit_list')}}"> 전체 트윗 목록 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ url_for('register')}}"> 회원 가입 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ url_for('login')}}"> 로그인 </a>
+        </div>
+        {% endif %}
+    
+        {% with flashes = get_flashed_messages() %}
+            {% if flashes %}
+                <ul class="flash">
+                    {% for message in flashes %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <div class="body">
+            {% block body %} {% endblock %}
+        </div>
+        <div class="footer">
+            트위터 프로젝트 &mdash; 플라스크를 이용한 웹 어플리케이션
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+body{
+    background-color: #caece9;
+    font-size: 14px;
+}
+div.container{
+    background: white;
+    border: 1px solid #6eccc4;
+    width: 700px;
+    margin: 30px auto;
+}
+div.container h1{
+    background-color: #6eccc4;
+    margin: 0;
+    padding: 10px 14px;
+    color: white;
+    letter-spacing: 1px;
+    text-shadow: 0 0 3px #24776f;    
+}
+div.container div.navigation{
+    background-color: #dee928;
+    padding: 4px 10px;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #ccc;
+    color: #888;
+    font-size: 12;
+    letter-spacing: 0.5px;
+}
+div.container div.navigation a{
+    color: #444;
+    font-weight: bold;
+    text-decoration: none;
+}
+div.container div.body{
+    padding: 20px;
+}
+input[type="text"], input[type="password"]{
+    background-color: white;
+    border: ipx solid #bfe6e2;
+    padding: 3px;
+    font-size: 14px;
+    color: #105751;
+    border-radius: 2px;
+    margin: 3px;
+    margin-bottom: 7px;
+}
+input[type="submit"]{
+    background: #105751;
+    border: 1px solid #073b36;
+    padding: 2px 3px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 2px;
+}
+div.container h2{
+    color: #333;
+    text-shadow: 0 1px 2px #ccc;
+    margin: 0 0 10px 0;
+}
+div.container div.footer{
+    background: #679994;
+    color: #666;
+    font-size: 12px;
+    padding: 5px 10px;
+    text-align: center;
+}
+div.error{
+    margin: 10px 0;
+    background: #fae4e4;
+    border: 1px solid #dd6f6f;
+    border-radius: 2px;
+    padding: 4px;
+    font-size: 13px;
+}
