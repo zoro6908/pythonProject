@@ -1,5 +1,46 @@
 {% extends "layout.html" %}
-{% block title %}전체 트윗글{% endblock %}
+{% block title %}
+{% if request.endpoint == 'public_twit' %} 전체 트윗
+{% else %} 나의 트윗
+{% endif %}
+{% endblock %}
 {% block body %}
     <h2>{{ self.title() }}</h2>
+    {% if g.user %}
+        {% if request.endpoint == 'user_twit' %}
+        <div class="followstatus">
+            {% if g.user.user_id == profile_user.user_id %}
+            자신의 트윗~~~
+            {% elif followed %}
+            현재 팔로우 중입니다.
+                <a class="unfollow" href="{{ url_for('unfollow_user', username=profile_user.username) }}">언팔로우 하기</a>
+            {% else %}
+                <a class="follow" href="{{ url_for('follow_user', username=profile_user.username) }}">팔로우 하기</a>
+            {% endif %}
+        </div>
+        {% elif request.endpoint == 'twit_list' %}
+        <div class="twitbox">
+            <h3>무슨일이 있나요???</h3>
+            <form action="{{ url_for('add_message') }}" method="POST">
+                <p>
+                    <input type="text" name="text" size="60">
+                    <input type="submit" value="공유하기">
+                </p>
+            </form>
+        </div>
+        {% endif %}
+    {% endif %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>
+            <img src="{{ message.email | gravatar(size=48) }}">
+            <p>
+                <strong><a href="{{ url_for('user_twit', username=message.username) }}"></a>{{ message.user_name }}</strong>{{ message.text }}
+                <small>&mdash;{{ message.pub_date | datetimeformat }}</small>
+            </p>
+        </li>
+        {% else %}
+        <li>메시지가 존재하지 않습니다.</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

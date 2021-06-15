@@ -9,22 +9,21 @@
 <body>
     <div class="container">
         <h1>Twitter 만들기 연습</h1>
-        <div class="navigation"></div>
+        <div class="navigation">
         {% if g.user %}
-            <a href=""> 나의 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
-            <a href=""> 전체 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
-            <a href="{{ rul_for('logout')}}"> 로그 아웃 </a>
-        </div>
+            <a href="{{ url_for('user_twit') }}"> 나의 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ url_for('public_twit') }}"> 전체 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ url_for('logout') }}"> 로그 아웃 [{{ g.user.username }}]</a>
         {% else %}
-            <a href="{{ url_for('twit_list')}}"> 전체 트윗 목록 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
-            <a href="{{ url_for('register')}}"> 회원 가입 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
-            <a href="{{ url_for('login')}}"> 로그인 </a>
+            <a href="{{ url_for('public_twit') }}"> 전체 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ url_for('register') }}"> 회원 가입 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ url_for('login') }}"> 로그인 </a>
         </div>
         {% endif %}
     
         {% with flashes = get_flashed_messages() %}
             {% if flashes %}
-                <ul class="flash">
+                <ul class="flashes">
                     {% for message in flashes %}
                     <li>{{ message }}</li>
                     {% endfor %}
