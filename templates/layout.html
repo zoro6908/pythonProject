@@ -11,9 +11,9 @@
         <h1>Twitter 만들기 연습</h1>
         <div class="navigation">
         {% if g.user %}
-            <a href="{{ url_for('user_twit') }}"> 나의 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
+            <a href="{{ url_for('twit_list') }}"> 나의 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
             <a href="{{ url_for('public_twit') }}"> 전체 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
-            <a href="{{ url_for('logout') }}"> 로그 아웃 [{{ g.user.username }}]</a>
+            <a href="{{ url_for('logout') }}"> 로그 아웃 [{{ g.user.user_name }}]</a>
         {% else %}
             <a href="{{ url_for('public_twit') }}"> 전체 트윗 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;
             <a href="{{ url_for('register') }}"> 회원 가입 </a> &nbsp; &nbsp; &nbsp; | &nbsp; &nbsp; &nbsp;

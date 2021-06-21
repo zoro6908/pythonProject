@@ -45,7 +45,7 @@ def format_datetime(timestamp):
     return datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M')
 
 
-# gavatar.com에서 제공하는 이미지 서비스를 받기 위한 함수 설정
+# gavatar.com 에서 제공하는 이미지 서비스를 받기 위한 함수 설정
 def gravatar_url(email, size=50):
     return 'http://www.gravatar.com/avatar/%s?d=identicon&s=%d' % \
            (md5(email.strip().lower().encode('utf-8')).hexdigest(), size)
@@ -57,11 +57,13 @@ def before_request():
     g.user = None        # 글로벌 변수 g에 g.user 객체 생성하고 초기화
     if 'user_id' in session:   # session 객체에 user_id 라는 속성이 있으면 g.user 에 값을 할당
         g.user = query_db('select * from user where user_id = ?', [session['user_id']], one=True)
+        # print('g.user 할당', g.user.user_id)
+    # print('g.user 할당', g.user)
 
 
 @app.teardown_request
 def teardown_request(exception):
-    if hasattr(g, 'db'): # g 클래스에 db 라는 항목이 있으면 db close 한다
+    if hasattr(g, 'db'):   # g 클래스에 db 라는 항목이 있으면 db close 한다
         g.db.close()
     return exception
 
@@ -89,13 +91,15 @@ def twit_list():
         WHERE message.author_id = user.user_id 
         AND (user.user_id = ? or user.user_id in (SELECT whom_id FROM follower WHERE who_id = ?))    
         ORDER BY message.pub_date DESC LIMIT ?'''
-    messages = query_db(sql, [session['user_id'], session['user_id'],PER_PAGE])
-
+    messages = query_db(sql, [session['user_id'], session['user_id'], PER_PAGE])
+    print(request.endpoint)
     return render_template('twit_list.html', messages=messages)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if g.user:
+        return redirect(url_for('twit_list'))
     error = None
     # 최초에 들어갈 때는 GET 방식 이므로 register.html 을 렌더링한다
     if request.method == 'POST':
@@ -134,18 +138,18 @@ def follow_user(username):
     sql = 'INSERT INTO follower(who_id, whom_id) VALUES(?, ?)'
     g.db.execute(query_db(sql, [session['user_id'], whom_id]))
     g.db.commit()
-    flash('지금 "%s"를 팔로으 했습니다.' % username)
+    flash('지금 "%s"를 팔로우 했습니다.' % username)
     return redirect(url_for('user_twit', username=username))
 
 
 @app.route('/<username>/unfollow')
-def unfollow(username):
+def unfollow_user(username):
     if not g.user:
         abort(401)
     whom_id = get_user_id(username)
     if whom_id is None:
         abort(404)
-    sql = 'DELETE FORM follow WHERE who_id = ? and whom_id = ?'
+    sql = 'DELETE FROM follower WHERE who_id = ? and whom_id = ?'
     g.db.execute(sql, [session['user_id'], whom_id])
     g.db.commit()
     flash('"%s"를 언팔로우 처리가 되었습니다.' % username)
@@ -154,31 +158,35 @@ def unfollow(username):
 
 @app.route('/<username>')
 def user_twit(username):
-    sql = 'SELECT * FROM user WHERE username = ?'
+    sql = 'SELECT * FROM user WHERE user_name = ?'
     profile_user = query_db(sql, [username], one=True)
+    # print(g.user['user_name'], 'g.user.user_name')
 
     if profile_user is None:
         abort(404)
 
+    print(profile_user)
     followed = False
 
     if g.user:
-        sql = 'SELECT 1 FROM follower WHERE who_id = ? and whom_id = ?'
+        sql = 'SELECT 1 FROM follower WHERE who_id = ? AND whom_id = ?'
         # sql = 'SELECT 1 FROM follower WHERE follower.who_id = ? and follower.whom_id = ?'
-        followed = query_db(sql, [session['uer_id'], profile_user['user_id']], one=True) is not None
-        # 값이 none이 아니면 followed 는 Ture값을 갖음
+        followed = query_db(sql, [session['user_id'], profile_user['user_id']], one=True) is not None
+        print(followed)
+        # 값이 none 이 아니면 followed 는 Ture 값을 갖음
 
     sql = '''SELECT message.*, user.* FROM message, user 
             WHERE message.author_id = user.user_id AND user.user_id = ?
             ORDER BY pub_date DESC limit ?'''
     messages = query_db(sql, [profile_user['user_id'], PER_PAGE])
 
-    return render_template('twit_list.html', messsages=messages)
+    return render_template('twit_list.html', messsages=messages, profile_user=profile_user, followed=followed)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if g.user:
+        # print(g.user)
         return redirect(url_for('twit_list'))
     error = None
     if request.method == 'POST':
@@ -194,6 +202,7 @@ def login():
         else:
             flash("로그인에 성공했습니다.")
             session['user_id'] = user['user_id']
+            print(g.user)
             return redirect(url_for('twit_list'))
 
     return render_template('login.html', error=error)
